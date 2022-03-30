@@ -8,28 +8,33 @@
     Author URI: http://iagoaugusto.xyz/
 */
 
-//Creating a class here to avoid conflict in function names
-class IagoRaketechPlugin {
-    function __construct() {
-        add_action('admin_menu', array($this, 'adminPage'));
-    }
-
-//basic settings for the adminBar right after the constructor
-    function adminPage() {
-        add_options_page('Iago Plugin Settings', 'Iago Plugin', 'manage_options', 'iago-plugin', array($this, 'ourHTML')); //
-    }
-
-//creating a function to config our Settings Page in HTML
-    function ourHTML() { ?>
-        <div class='wrap'>
-            <h1>Iago's Plugin Settings</h1>
-        </div>
-    <?php } 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-//If any other plugins need to remove one of our actions or filters they use this variable to look inside our class.
-$IagoRaketechPlugin = new IagoRaketechPlugin();
+// Load plugin class files.
+require_once 'includes/class-iago-plugin.php';
+require_once 'includes/class-iago-plugin-settings.php';
 
+// Load plugin libraries.
+require_once 'includes/lib/class-iago-plugin-admin-api.php';
+require_once 'includes/lib/class-iago-plugin-post-type.php';
+require_once 'includes/lib/class-iago-plugin-taxonomy.php';
 
+/**
+ * Returns the main instance of iago-plugin to prevent the need to use globals.
+ *
+ * @since  1.0.0
+ * @return object iago-plugin
+ */
+function iago-plugin() {
+	$instance = iago-plugin::instance( __FILE__, '1.0.0' );
 
-?>
+	if ( is_null( $instance->settings ) ) {
+		$instance->settings = iago-plugin_Settings::instance( $instance );
+	}
+
+	return $instance;
+}
+
+iago-plugin();
